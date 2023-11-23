@@ -36,7 +36,7 @@
                 <a class="btn btn-secondary" href="/packages/{{ $product_data->package_id }}">View Associated Package</a>
             @else
                 @if (session()->get('user_type') == 'A')
-                    <a class="btn btn-secondary" href="/packageItem/assign/{{ $product_data->product_id }}">Assign to
+                    <a class="btn btn-secondary" href="/packaged-item/assign/{{ $product_data->product_id }}">Assign to
                         Package</a>
                 @endif
             @endif

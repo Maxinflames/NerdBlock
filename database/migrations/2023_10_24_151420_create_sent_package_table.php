@@ -20,6 +20,8 @@ class CreateSentPackageTable extends Migration
             $table->foreign('subscription_id')->references('subscription_id')->on('subscription')->onDelete('cascade');
             $table->foreign('package_id')->references('package_id')->on('package')->onDelete('cascade');
             $table->date('sent_package_date');
+            $table->Integer('sent_package_rating')->nullable(true);
+            $table->string('sent_package_rating_description', 255)->nullable(true);
         });
     }
 

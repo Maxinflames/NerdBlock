@@ -59,7 +59,7 @@
                                 <label for="product_cost" class="col-md-4 control-label">Product Cost</label>
 
                                 <div class="col-md-6">
-                                    <input id="product_cost" type="number" step="0.01" class="form-control"
+                                    <input id="product_cost" g class="form-control"
                                         name="product_cost" value="{{ old('product_cost') }}" required>
 
                                     @if ($errors->has('product_cost'))

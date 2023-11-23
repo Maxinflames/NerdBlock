@@ -26,6 +26,13 @@
                 </div>
             @endif
         </div>
+        @if (Session::has('url_error'))
+            <div class="center">
+                <span class="help-block">
+                    <strong>{{ Session::pull('url_error') }}</strong>
+                </span>
+            </div>
+        @endif
         <table class="table table-striped">
             <!-- Table column headers -->
             <tr>
@@ -38,7 +45,7 @@
             @foreach ($packages as $package)
                 <tr>
                     <td class="text-center">{{ $package->package_id }}</td>
-                    @if($package->genre_title != null)
+                    @if ($package->genre_title != null)
                         <td class="text-center">{{ $package->genre_title }}</td>
                     @else
                         <td class="text-center">Not Assigned</td>

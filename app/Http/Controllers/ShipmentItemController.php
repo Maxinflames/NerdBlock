@@ -13,30 +13,6 @@ use Illuminate\Http\Request;
 
 class ShipmentItemController extends Controller
 {
-    //
-    public function index()
-    {
-        if(Session::has('active_user'))
-        {
-            if (session()->get('user_type') == 'A' || session()->get('user_type') == 'E' )
-            {
-                return view('ShipmentItem.index');
-            }
-        }
-    }
-
-    public function show(shipment_item $shipment_item)
-    {
-        if(Session::has('active_user'))
-        {
-            if (session()->get('user_type') == 'A' || session()->get('user_type') == 'E' )
-            {
-
-                return view('ShipmentItem.show', compact('shipment_item'));
-            }
-        }
-    }
-    
     public function create(shipment $shipment)
     {
         if(Session::has('active_user'))
@@ -52,28 +28,6 @@ class ShipmentItemController extends Controller
                 return view('ShipmentItem.create', compact('shipment', 'products'));
             }
         }
-    }
-
-    public function edit(shipment_item $shipment_item)
-    {        
-        if(Session::has('active_user'))
-        {
-            if (session()->get('user_type') == 'A')
-            {
-                return view('ShipmentItem.edit', compact('shipment_item'));
-            }
-        }
-    }
-
-    // Likely will be given no functionality
-    public function delete(/**Post $post**/)
-    {
-
-    }
-
-    public function search()
-    {
-
     }
 
     public function store()
@@ -198,16 +152,5 @@ class ShipmentItemController extends Controller
                 }
         }
         return redirect('/shipments/'.request('shipment_id'));
-    }
-
-    public function update()
-    {
-
-    }
-
-    // Likely will be given no functionality
-    public function destroy()
-    {
-
     }
 }

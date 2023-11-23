@@ -33,7 +33,7 @@
                 <th class="text-center">Genre Description</th>
                 @if (Session::has('active_user'))
                     @if (session()->get('user_type') == 'A')
-                        <th colspan="3"></th>
+                        <th colspan="2"></th>
                     @endif
                 @endif
             </tr>
@@ -54,7 +54,21 @@
                         @if (session()->get('user_type') == 'A')
                             <td class="text-center width-5"><a class="btn btn-secondary"
                                     href="/catalogue/edit/{{ $genre->genre_id }}">Edit</a></td>
-                            <td class="text-center width-5"><a class="btn btn-danger" href="#">Disable</a></td>
+                            <td>
+                                @if ($genre->genre_active == 1)
+                                    <form method="POST" action="/catalogue/disable">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" value="{{ $genre->genre_id }}" name="genre_id">
+                                        <button class="btn btn-danger">Disable</button>
+                                    </form>
+                                @else
+                                    <form method="POST" action="/catalogue/enable">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" value="{{ $genre->genre_id }}" name="genre_id">
+                                        <button class="btn btn-danger">Enable</button>
+                                    </form>
+                                @endif
+                            </td>
                         @endif
                     @endif
                 </tr>

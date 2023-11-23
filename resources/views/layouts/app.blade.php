@@ -57,6 +57,14 @@
                                             {{ csrf_field() }}
                                         </form>
                                     </li>
+
+                                    @if (Session::get('user_type') == 'C')
+                                        <li>
+                                            <a href="/users/{{ Session::get('user_id') }}">
+                                                Account
+                                            </a>
+                                        </li>
+                                    @endif
                                 </ul>
                             </li>
                         @else
@@ -76,7 +84,6 @@
                     <li><a href="/packages" class="btn">View Packages</a></li>
                     <li><a href="/products" class="btn">View Products</a></li>
                     <li><a href="/shipments" class="btn">View Shipments</a></li>
-                    <li><a href="/sent_package" class="btn">Fulfill Order</a></li>
                 @endif
                 @if (session()->get('user_type') == 'A')
                     <li><a href="/reports" class="btn">Reports</a></li>

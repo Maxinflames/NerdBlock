@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
+
 use App\genre;
 use App\client;
 use App\subscription;
+use App\package;
+
 use Session;
+
 use Carbon\Carbon;
 
 class SubscriptionController extends Controller
@@ -21,7 +25,7 @@ class SubscriptionController extends Controller
             if (session()->get('user_type') == 'C')
             {
                 $subscriptions = subscription::select(['subscription.*', 'genre.genre_title',
-                    DB::raw('date_add(subscription.subscription_date, interval subscription.subscription_length month) as subscription_end_date')])
+                    DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
                     ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
                     ->join('client', 'subscription.client_id', '=', 'client.client_id')
                     ->where('client.user_id', "=", session()->get('user_id'))
@@ -32,7 +36,7 @@ class SubscriptionController extends Controller
             else
             {
                 $subscriptions = subscription::select(['subscription.*', 'genre.genre_title', 'client.client_id',
-                DB::raw('date_add(subscription.subscription_date, interval subscription.subscription_length month) as subscription_end_date')])
+                DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
                 ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
                 ->join('client', 'subscription.client_id', '=', 'client.client_id')
                 ->get();
@@ -44,11 +48,23 @@ class SubscriptionController extends Controller
     }
 
     // Probably not necessary, all data is shown in index
-    public function show(/**Post $post**/)
+    public function show(subscription $subscription)
     {
         if(Session::has('active_user'))
         {
-            
+            $subscription = subscription::select(['subscription.*', 'genre.genre_title', 'client.user_id',
+            DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
+            ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
+            ->join('client', 'subscription.client_id', '=', 'client.client_id')
+            ->where('subscription.subscription_id', "=", $subscription->subscription_id)
+            ->first();
+
+            $associated_packages = package::select(['package.package_month', 'package.package_year', 'sent_package.sent_package_id', 'sent_package.sent_package_date'])
+            ->join('sent_package', 'package.package_id','sent_package.package_id')
+            ->where('sent_package.subscription_id', '=', $subscription->subscription_id)
+            ->get();
+
+            return view('subscription.show', compact('subscription', 'associated_packages'));
         }
         else
         {
@@ -85,7 +101,6 @@ class SubscriptionController extends Controller
 
     public function search()
     {                
-
         // Takes given id, 
         $text = request('search_text');
         if($text != "" || $text != null){
@@ -102,20 +117,16 @@ class SubscriptionController extends Controller
                         ->where('genre.genre_title', 'like', '%' . $text . '%');
                     })
                     ->get();
-
-                return view('subscription.index', compact('subscriptions'));
             }
             else
             {
                 $subscriptions = subscription::select(['subscription.*', 'genre.genre_title', 'client.client_id',
-                DB::raw('date_add(subscription.subscription_date, interval subscription.subscription_length month) as subscription_end_date')])
+                DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
                 ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
                 ->join('client', 'subscription.client_id', '=', 'client.client_id')
                 ->where('subscription.subscription_id', 'like', '%' . $text . '%')
                 ->orwhere('genre.genre_title', 'like', '%' . $text . '%')
                 ->get();
-
-                return view('subscription.index', compact('subscriptions'));
             }
 
             // If the post exists that is equal to Id, redirect to the view page

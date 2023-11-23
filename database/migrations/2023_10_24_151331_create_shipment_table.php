@@ -17,7 +17,7 @@ class CreateShipmentTable extends Migration
             $table->increments('shipment_id');
             $table->date('shipment_date');
             $table->string('shipment_destination',75);
-            $table->boolean('shipment_outgoing');
+            $table->boolean('shipment_outgoing')->default(1);
         });
     }
 

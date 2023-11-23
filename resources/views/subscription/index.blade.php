@@ -15,22 +15,32 @@
                         @if (Session::has('search_error'))
                             <label for="search_text">{{ Session::pull('search_error') }}</label>
                         @endif
-                        <input class="width-30" id="search_text" name="search_text" placeholder="Search Subscription Id or Genre Title Here..." type="text" />
+                        <input class="width-30" id="search_text" name="search_text"
+                            placeholder="Search Subscription Id or Genre Title Here..." type="text" />
                         <button class="btn btn-secondary">Search</button>
                     </form>
                 </div>
+            @endif
+            @if (Session::has('active_user'))
+                @if (session()->get('user_type') == 'A' || session()->get('user_type') == 'E')
+                    <div>
+                        <td class="text-center"><a href="/subscriptions/fulfill" class="btn btn-primary">Incomplete
+                                Subscriptions</a></td>
+                    </div>
+                @endif
             @endif
         </div>
         <table class="table table-striped">
             <!-- Table column headers -->
             <tr>
+                <th class="text-center">Subscription ID</th>
                 @if (Session::has('active_user'))
                     @if (session()->get('user_type') == 'A' || session()->get('user_type') == 'E')
-                        <th class="text-center">Subscription ID</th>
                         <th class="text-center">Client ID</th>
                     @endif
                 @endif
 
+                <th class="text-center">Genre ID</th>
                 <th class="text-center">Genre Title</th>
                 <th class="text-center">Subscribed Date</th>
                 <th class="text-center">Subscription Length (Months)</th>
@@ -45,18 +55,20 @@
             <!-- loop through database data and display for each entry -->
             @foreach ($subscriptions as $subscription)
                 <tr>
+                    <td class="text-center width-10">{{ $subscription->subscription_id }}</td>
                     @if (Session::has('active_user'))
                         @if (session()->get('user_type') == 'A' || session()->get('user_type') == 'E')
-                            <td class="text-center width-10">{{ $subscription->subscription_id }}</td>
                             <td class="text-center width-10">{{ $subscription->client_id }}</td>
                         @endif
                     @endif
+                    <td class="text-center width-15">{{ $subscription->genre_id }}</td>
                     <td class="text-center width-15">{{ $subscription->genre_title }}</td>
                     <td class="text-center width-15">{{ $subscription->subscription_date }}</td>
                     <td class="text-center width-15">{{ $subscription->subscription_length }}</td>
                     <td class="text-center width-15">{{ $subscription->subscription_end_date }}</td>
                     <td class="text-center width-15">${{ $subscription->subscription_cost }}</td>
-                    <td class="text-center width-5"><a class="btn btn-secondary" href="#">View</a></td>
+                    <td class="text-center width-5"><a class="btn btn-secondary"
+                            href="/subscriptions/{{ $subscription->subscription_id }}">View</a></td>
                     @if (Session::has('active_user'))
                         @if (session()->get('user_type') == 'A')
                             <td class="text-center width-5"><a class="btn btn-secondary" href="#">Edit</a></td>

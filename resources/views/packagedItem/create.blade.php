@@ -18,6 +18,12 @@
             </tr>
         </table>
 
+        @if (count($products) == 0)
+            <br>
+            <p class="text-center">There are no products available to add to this package!</p>
+            <br>
+        @endif
+
         <table class="table table-striped">
             <!-- Table column headers -->
             <tr>
@@ -47,7 +53,7 @@
                         <form method="POST" action="/packaged-item">
                             {{ csrf_field() }}
                             <input type="hidden" value="{{ $retrieved_package->package_id }}" name="package_id">
-                            <input type="hidden" value="{{ $retrieved_package->product_id }}" name="product_id">
+                            <input type="hidden" value="{{ $product->product_id }}" name="product_id">
                             <button class="btn btn-primary">Add</button>
                         </form>
                     </td>

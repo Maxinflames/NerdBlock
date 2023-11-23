@@ -11,14 +11,14 @@
 
             <!-- Searches for a post using ID of the post -->
             <div class="text-end">
-              <form method="POST" action="/users/search">
-                {{ csrf_field() }}
-                @if (Session::has('search_error'))
-                  <label for="id">{{Session::pull('search_error')}}</label>
-                @endif
-                <input id="id" name="id" placeholder="Search Here..." type="number" min=1 />
-                <button class="btn btn-secondary">Search</button>
-              </form>
+                <form method="POST" action="/users/search">
+                    {{ csrf_field() }}
+                    @if (Session::has('search_error'))
+                        <label for="id">{{ Session::pull('search_error') }}</label>
+                    @endif
+                    <input id="id" name="id" placeholder="Search Here..." type="number" min=1 />
+                    <button class="btn btn-secondary">Search</button>
+                </form>
             </div>
         </div>
         @if (count($users) != 0)
@@ -56,8 +56,13 @@
                         <td class="text-center width-10">{{ $user->client_region_post_code }}</td>
                         <td class="text-center">{{ $user->client_country_code }}</td>
                         <td class="text-center width-10">{{ $user->client_telephone }}</td>
-                        <td class="text-center"><a class="btn btn-secondary" href="#">Edit</a></td>
-                        <td class="text-center"><a class="btn btn-danger" href="#">Disable</a></td>
+                        <td class="text-center"><a class="btn btn-secondary"
+                                href="/users/{{ $user->user_id }}">View</a></td>
+                        @if (session()->get('user_type') == 'A')
+                            <td class="text-center"><a class="btn btn-secondary"
+                                    href="/users/edit/{{ $user->user_id }}">Edit</a></td>
+                            <td class="text-center"><a class="btn btn-danger" href="#NotImplemented">Disable</a></td>
+                        @endif
                     </tr>
                 @endforeach
             </table>

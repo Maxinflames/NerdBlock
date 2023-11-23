@@ -13,7 +13,26 @@ class GenreController extends Controller
     //
     public function index()
     {
-        $genres = genre::all();
+        if(Session::has('active_user'))
+        {
+            if (session()->get('user_type') == 'A')
+            {
+                $genres = genre::all();
+            }
+            else
+            {
+                $genres = genre::select(['genre.*'])
+                ->where('genre_active', '=', true)
+                ->get();
+            }
+        }
+        else
+        {
+            $genres = genre::select(['genre.*'])
+            ->where('genre_active', '=', true)
+            ->get();
+        }
+
         return view('genre.index', compact('genres'));
     }
     
@@ -41,26 +60,59 @@ class GenreController extends Controller
         return redirect('/');
     }
 
-    // Likely will be given no functionality
-    public function delete(/**Post $post**/)
-    {
-
-    }
-
     public function search()
     {
         // Takes given id, 
         $text = request('search_text');
+        if(Session::has('active_user'))
+        {
+            if (session()->get('user_type') == 'A')
+            {
+                $genres = genre::select(['genre.*'])
+                ->where('genre_title', 'like', '%' . $text . '%')
+                ->orwhere('genre_description', 'like', '%' . $text . '%')
+                ->get();
+        
+                $count = genre::select(['genre.*'])
+                ->where('genre_title', 'like', '%' . $text . '%')
+                ->orwhere('genre_description', 'like', '%' . $text . '%')
+                ->count();
+            }
+            else
+            {
+                $genreMatches = genre::select(['genre.*'])
+                ->where('genre_title', 'like', '%' . $text . '%')
+                ->orwhere('genre_description', 'like', '%' . $text . '%')
+                ->get();
 
-        $genres = genre::select(['genre.*'])
-        ->where('genre_title', 'like', '%' . $text . '%')
-        ->orwhere('genre_description', 'like', '%' . $text . '%')
-        ->get();
+                $genres = genre::select(['genre.*'])
+                ->where('genre_active', true)
+                ->wherein('genre_id', $genreMatches)
+                ->get();
+        
+                $count = genre::select(['genre.*'])
+                ->where('genre_active', true)
+                ->wherein('genre_id', $genreMatches)
+                ->count();
+            }
+        }
+        else
+        {
+            $genreMatches = genre::select(['genre.*'])
+            ->where('genre_title', 'like', '%' . $text . '%')
+            ->orwhere('genre_description', 'like', '%' . $text . '%')
+            ->get();
 
-        $count = genre::select(['genre.*'])
-        ->where('genre_title', 'like', '%' . $text . '%')
-        ->orwhere('genre_description', 'like', '%' . $text . '%')
-        ->count();
+            $genres = genre::select(['genre.*'])
+            ->where('genre_active', true)
+            ->wherein('genre_id', $genreMatches)
+            ->get();
+    
+            $count = genre::select(['genre.*'])
+            ->where('genre_active', true)
+            ->wherein('genre_id', $genreMatches)
+            ->count();
+        }
 
         // If the post exists that is equal to Id, redirect to the view page
         if ($count != 0) {
@@ -104,9 +156,25 @@ class GenreController extends Controller
         return redirect('/catalogue');
     }
 
-    // Likely will be given no functionality
-    public function destroy()
+    public function disable()
     {
+        $this->validate(request(), [
+        ]);
+        genre::where('genre_id', request('genre_id'))->update([
+            'genre_active' => 0,
+        ]);
 
+        return redirect('/catalogue');
+    }
+
+    public function enable()
+    {
+        $this->validate(request(), [
+        ]);
+        genre::where('genre_id', request('genre_id'))->update([
+            'genre_active' => 1,
+        ]);
+
+        return redirect('/catalogue');
     }
 }

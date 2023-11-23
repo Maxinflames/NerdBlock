@@ -21,6 +21,7 @@ class CreateUserTable extends Migration
             $table->unique('user_email_address');
             $table->string('user_password', 255);
             $table->string('user_type', 1);
+            $table->boolean('user_active')->default(1);
         });
     }
 

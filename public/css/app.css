@@ -48,6 +48,14 @@ html, body {
 	padding-top: 10px;
 }
 
+.top-padding-5{
+	padding-top: 5px;
+}
+
+.font-increase{
+	font-size: 18px;
+}
+
 .fixed {
 	min-width: 175px;
 	position: fixed;
@@ -103,6 +111,7 @@ html, body {
 .center {
     align-items: center;
     justify-content: center;
+	text-align: center;
 }
 
 .flex-center {

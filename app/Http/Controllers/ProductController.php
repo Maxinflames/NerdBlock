@@ -167,7 +167,6 @@ class ProductController extends Controller
             'genre_id' => request('genre_id'),
             'product_title' => request('product_title'),
             'product_description' => request('product_description'),
-            'product_title' => request('product_title'),
             'product_cost' => request('product_cost'),
             'product_manufacturer' => request('product_manufacturer'),
             'product_brand' => request('product_brand'),

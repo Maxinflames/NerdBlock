@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,6 +31,8 @@ Route::get('/register', 'RegisterController@index')->name('register');
 
 Route::post('/register', 'RegisterController@create')->name('register-create');
 
+
+
 // Displays the catalogue of Genres available, available to everyone, but some buttons and accesses depend on user type
 Route::get('/catalogue', 'GenreController@index')->name('genre');
 
@@ -45,7 +48,8 @@ Route::post('/catalogue/update', 'GenreController@update')->name('genre-update')
 
 Route::get('/catalogue/{genre}', 'GenreController@show')->name('genre-show');
 
-//Route::get('/catalogue/destroy/{genre}', 'GenreController@destroy')->name('genre-destroy');
+Route::post('/catalogue/disable', 'GenreController@disable')->name('genre-disable');
+Route::post('/catalogue/enable', 'GenreController@enable')->name('genre-enable');
 
 
 
@@ -64,9 +68,15 @@ Route::post('/subscriptions', 'SubscriptionController@store')->name('subscriptio
 Route::get('/subscriptions/edit/{subscription}', 'SubscriptionController@edit')->name('subscription-edit');
 Route::post('/subscriptions/update', 'SubscriptionController@update')->name('subscription-update');
 
+// Allows admins to create new package items
+Route::get('/subscriptions/fulfill', 'SentPackageController@index')->name('sent_package-index');
+Route::get('/subscriptions/fulfill/assign/{subscription}', 'SentPackageController@assign')->name('sent_package-assign');
+Route::post('/subscriptions/fulfill', 'SentPackageController@search')->name('sent_package-search');
+Route::get('/subscriptions/rate/{sent_package}', 'SentPackageController@rate')->name('sent_package-rate');
+Route::post('/sent_package/update', 'SentPackageController@update')->name('sent_package-update');
+
 Route::get('/subscriptions/{subscription}', 'SubscriptionController@show')->name('subscription-show');
 
-//Route::get('/subscriptions/destroy/{subscription}', 'SubscriptionController@destroy')->name('subscription-destroy');
 
 
 // All user and Client listings will be completed through the ClientController as the majority of information is very directly linked
@@ -84,16 +94,8 @@ Route::post('/users', 'ClientController@store')->name('user-store');
 Route::get('/users/edit/{user}', 'ClientController@edit')->name('user-edit');
 Route::post('/users/update', 'ClientController@update')->name('user-update');
 
-Route::get('/users/{user}', 'ClientController@show')->name('user');
-
-// Destroys an account, make several protocols with warnings, and cascade the destruction. 
-// Admin exlusive, likely not necessary for sake of back tracking data. (Wait to develop for further info)
-//Route::get('/users/destroy/{user}', 'UsersController@destroy')->name('user-destroy');
-
 // Displays a client their own account information
-Route::get('/account', 'ClientController@index')->name('client');
-// All other account details should be listed in the User catalogue for admins and employees
-
+Route::get('/users/{user}', 'ClientController@show')->name('user-show');
 
 
 // Displays catalogue of products
@@ -111,11 +113,6 @@ Route::post('/products', 'ProductController@store')->name('product-store');
 Route::get('/products/edit/{product}', 'ProductController@edit')->name('product-edit');
 Route::post('/products/update', 'ProductController@update')->name('product-update');
 
-// Allows admins to destroy product information. Make several protocols with warnings, 
-// and cascade the destruction. Admin exlusive, likely not necessary for sake of back tracking data. (Wait to develop for further info)
-//Route::get('/products/destroy/{product}', 'ProductController@destroy')->name('product-destroy');
-
-//Route::post('/products/destroy', 'ProductController@destroy');
 
 
 // Admin and Employee Exlusive Displays catalogue of packages
@@ -126,19 +123,18 @@ Route::get('/packages/create', 'PackageController@create')->name('package-create
 Route::post('/packages/search', 'PackageController@search')->name('package-search');
 Route::post('/packages/product/search', 'PackageController@search')->name('package-search');
 
-// Allows admins to create new packages
-Route::get('/packages/{package}', 'PackageController@show')->name('package-show');
-Route::post('/packages', 'PackageController@store')->name('package-store');
+Route::get('/packages/fulfill/create/{package}', 'SentPackageController@create')->name('sent_package-create');
+
 
 // Allows admins to update package information
 Route::get('/packages/edit/{package}', 'PackageController@edit')->name('package-edit');
 Route::post('/packages/update', 'PackageController@update')->name('package-update');
 
-// Allows admins to destroy package information. Make several protocols with warnings, 
-// and cascade the destruction. Admin exlusive, likely not necessary for sake of back tracking data. (Wait to develop for further info)
-//Route::get('/packages/destroy/{product}', 'PackageController@destroy')->name('package-destroy');
+// Allows admins to create new packages
+Route::get('/packages/{package}', 'PackageController@show')->name('package-show');
+Route::post('/packages', 'PackageController@store')->name('package-store');
 
-// Make more routes for shipments, package items (Which I believe will be tied into the packages somewhat), shipment items (Same but with shipments), and sent packages
+
 // Admin and Employee Exlusive Displays catalogue of shipment
 Route::get('/shipments', 'ShipmentController@index')->name('shipment');
 
@@ -156,35 +152,25 @@ Route::post('/shipments/update', 'ShipmentController@update')->name('shipment-up
 Route::get('/shipments/{shipment}', 'ShipmentController@show')->name('shipment-show');
 
 
-// Admin and Employee Exlusive Displays catalogue of shipment
-Route::get('/shipment-item', 'ShipmentItemController@index')->name('shipment-item');
-
-// Handles the search functionality of the shipment catalogue
-Route::post('/shipment-item/search', 'ShipmentItemController@search')->name('shipment-item-search');
 
 // Allows admins to create new shipment
 Route::get('/shipment-item/create/{shipment}', 'ShipmentItemController@create')->name('shipment-item-create');
 Route::post('/shipment-item/create/{shipment}', 'ShipmentItemController@store')->name('shipment-item-store');
 
-// Allows admins to update shipment information
-Route::get('/shipment-item/edit/{package}', 'ShipmentItemController@edit')->name('shipment-item-edit');
-Route::post('/shipment-item/update', 'ShipmentItemController@update')->name('shipment-item-update');
 
 
-
-// Admin and Employee Exlusive Displays catalogue of shipment
-Route::get('/packaged-item', 'PackagedItemController@index')->name('packaged_item');
-
-// Handles the search functionality of the shipment catalogue
-Route::post('/packaged-item/search', 'PackagedItemController@search')->name('packaged_item-search');
-
-// Allows admins to create new shipment
+// Allows admins to create new package items
 Route::get('/packaged-item/create/{package}', 'PackagedItemController@create')->name('packaged_item-create');
 Route::get('/packaged-item/assign/{product}', 'PackagedItemController@assign')->name('packaged_item-assign');
 Route::post('/packaged-item', 'PackagedItemController@store')->name('packaged_item-store');
 
-// Allows admins to update shipment information
-Route::get('/packaged-item/edit/{package}', 'PackagedItemController@edit')->name('packaged_item-edit');
-Route::post('/packaged-item/update', 'PackagedItemController@update')->name('packaged_item-update');
+Route::post('/sent-package', 'SentPackageController@store')->name('sent_package-store');
 
-Route::get('/packaged-item/{packaged_item}', 'PackagedItemController@show')->name('packaged_item-show');
+
+
+Route::get('/reports', 'ReportController@index')->name('reports');
+
+
+
+// Redirect to Home Page on 404
+Route::get('{any}', 'HomeController@index')->where('any', '.*')->name('return-home');

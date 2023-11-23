@@ -11,6 +11,10 @@
                         <form class="form-horizontal" method="POST" action="/users/update">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
+                            @if (!session()->get('user_type') == 'C')
+                                <input type="hidden" name="user_id" value="{{ $user->user_id }}" />
+                            @endif
+                            
                             <div class="form-group">
                                 <label for="user_first_name" class="col-md-4 control-label">First Name</label>
 
@@ -41,6 +45,8 @@
                                 </div>
                             </div>
                             @if ($user->user_type == 'C')
+                                <input type="hidden" name="client_id" value="{{ $client->client_id }}" />
+
                                 <div class="form-group">
                                     <label for="client_country" class="col-md-4 control-label">Country</label>
 
@@ -107,7 +113,8 @@
 
                                     <div class="col-md-6">
                                         <input id="client_region_post_code" type="text" class="form-control"
-                                            name="client_region_post_code" value="{{ $client->client_address }}" required>
+                                            name="client_region_post_code" value="{{ $client->client_region_post_code }}"
+                                            required>
 
                                         @if ($errors->has('client_region_post_code'))
                                             <span class="help-block">
@@ -123,7 +130,7 @@
 
                                     <div class="col-md-6">
                                         <input id="client_country_code" type="text" class="form-control"
-                                            value="{{ $client->client_address }}" name="client_country_code"
+                                            value="{{ $client->client_country_code }}" name="client_country_code"
                                             placeholder="X" required>
 
                                         @if ($errors->has('client_country_code'))
@@ -139,7 +146,7 @@
 
                                     <div class="col-md-6">
                                         <input id="client_telephone" type="text" class="form-control"
-                                            name="client_telephone" value="{{ $client->client_address }}"
+                                            name="client_telephone" value="{{ $client->client_telephone }}"
                                             placeholder="(XXX) XXX-XXXX" required>
 
                                         @if ($errors->has('client_telephone'))
@@ -150,21 +157,24 @@
                                     </div>
                                 </div>
                             @endif
-                            <div class="form-group">
-                                <label for="user_email_address" class="col-md-4 control-label">E-Mail Address</label>
 
-                                <div class="col-md-6">
-                                    <input id="user_email_address" type="email" class="form-control"
-                                        value="{{ $user->client_address }}" name="user_email_address" value=""
-                                        required>
+                            @if (!session()->get('user_type') == 'C')
+                                <div class="form-group">
+                                    <label for="user_email_address" class="col-md-4 control-label">E-Mail Address</label>
 
-                                    @if ($errors->has('user_email_address'))
-                                        <span class="help-block">
-                                            <strong>{{ $errors->first('user_email_address') }}</strong>
-                                        </span>
-                                    @endif
+                                    <div class="col-md-6">
+                                        <input id="user_email_address" type="email" class="form-control"
+                                            value="{{ $user->user_email_address }}" name="user_email_address"
+                                            value="" required>
+
+                                        @if ($errors->has('user_email_address'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('user_email_address') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div class="form-group">
                                 <label for="user_password" class="col-md-4 control-label">Password</label>
@@ -190,21 +200,37 @@
                                 </div>
                             </div>
 
-                            @if ($user->user_type != 'C')
-                                <div class="content form-group">
-                                    <input class="radio-input" id="type1" type="radio" name="user_type"
-                                        checked="true" value="E" tabindex="5" />
-                                    <label class="radio-label" for="type1">Employee</label>
+                            @if (!session()->get('user_type') == 'C')
+                                @if ($user->user_type != 'C')
+                                    <div class="content form-group">
+                                        @if ($user->user_type == 'E')
+                                            <input class="radio-input" id="type1" type="radio" name="user_type"
+                                                checked="true" value="E" tabindex="5" />
+                                            <label class="radio-label" for="type1">Employee</label>
 
-                                    <input class="radio-input" id="type2" type="radio" name="user_type"
-                                        value="A" tabindex="6" />
-                                    <label class="radio-label" for="type2">Administrator</label><br>
-                                </div>
-                                @if ($errors->has('user_type'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('user_type') }}</strong>
-                                    </span>
+                                            <input class="radio-input" id="type2" type="radio" name="user_type"
+                                                value="A" tabindex="6" />
+                                            <label class="radio-label" for="type2">Administrator</label><br>
+                                        @else
+                                            <input class="radio-input" id="type1" type="radio" name="user_type"
+                                                value="E" tabindex="5" />
+                                            <label class="radio-label" for="type1">Employee</label>
+
+                                            <input class="radio-input" id="type2" type="radio" name="user_type"
+                                                checked="true" value="A" tabindex="6" />
+                                            <label class="radio-label" for="type2">Administrator</label><br>
+                                        @endif
+                                    </div>
+                                    @if ($errors->has('user_type'))
+                                        <span class="help-block">
+                                            <strong>{{ $errors->first('user_type') }}</strong>
+                                        </span>
+                                    @endif
+                                @else
+                                    <input type="hidden" name="user_type" value="C" />
                                 @endif
+                            @else
+                                <input type="hidden" name="user_type" value="C" />
                             @endif
 
                             <div class="form-group">
@@ -215,6 +241,12 @@
                                 </div>
                             </div>
                         </form>
+                    </div>
+                    <div class="panel panel-footer">
+                        <td class="text-center">
+                            <div class="center"><a class="btn btn-primary" href="/users/{{ $user->user_id }}">View</a>
+                            </div>
+                        </td>
                     </div>
                 </div>
             </div>

@@ -45,19 +45,28 @@ class LoginController extends Controller
                 $user = User::where('user_email_address', $email)->get();
     
                 if(Hash::check($password, $user[0]->user_password)){
-                    session()->put('active_user', 'true');
-                    session()->put('user_id', $user[0]->user_id);
-                    session()->put('first_name', $user[0]->user_first_name);
-                    session()->put('last_name', $user[0]->user_last_name);
-                    session()->put('email', $user[0]->user_email_address);
-                    session()->put('user_type', $user[0]->user_type);
-                    if(client::where('user_id', $user[0]->user_id)->exists())
+                    if($user[0]->user_active == true)
                     {
-                        $client = client::where('user_id', $user[0]->user_id)->get();
-                        session()->put('client_id', $client[0]->client_id);
+                        session()->put('active_user', 'true');
+                        session()->put('user_id', $user[0]->user_id);
+                        session()->put('first_name', $user[0]->user_first_name);
+                        session()->put('last_name', $user[0]->user_last_name);
+                        session()->put('email', $user[0]->user_email_address);
+                        session()->put('user_type', $user[0]->user_type);
+                        if(client::where('user_id', $user[0]->user_id)->exists())
+                        {
+                            $client = client::where('user_id', $user[0]->user_id)->get();
+                            session()->put('client_id', $client[0]->client_id);
+                        }
+                        return redirect('/');
                     }
-                    return redirect('/');
-                };
+                    else
+                    {
+                        session()->flush();
+                        session()->put('loginError', 'This account has been Disabled. Please contact an Administrator for more information.');
+                        return redirect('/login');
+                    }
+                }
             }
             session()->flush();
             session()->put('loginError', 'Email and Password did not match our systems, please try again.');

@@ -17,6 +17,7 @@ class CreateGenreTable extends Migration
             $table->increments('genre_id');
             $table->string('genre_title', 50);
             $table->string('genre_description', 255);
+            $table->boolean('genre_active')->default(1);
         });
     }
 

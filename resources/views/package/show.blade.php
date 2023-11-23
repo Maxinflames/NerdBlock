@@ -23,6 +23,9 @@
             <p class="text-center">Currently there are no associated products!</p>
         @endif
         <div class="form-group text-center">
+            @if ($retrieved_package->genre_id != null)
+                <a href="/packages/fulfill/create/{{ $retrieved_package->package_id }}" class="btn btn-primary">Ship Package</a>
+            @endif
             @if (Session::has('active_user'))
                 @if (session()->get('user_type') == 'A')
                     <a href="/packaged-item/create/{{ $retrieved_package->package_id }}" class="btn btn-primary">Add Product to Package</a>

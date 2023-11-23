@@ -22,15 +22,15 @@
                 <div class="content form-group">
                     <input class="radio-input" id="length1" type="radio" name="subscription_length" checked="true"
                         value="3" />
-                    <label class="radio-label" for="length1">3 Months at $25 per Month ($75 Total)</label><br>
+                    <label class="radio-label" for="length1">3 Months - $75<br>($25 per Month)</label><br>
                 </div>
                 <div class="content form-group">
                     <input class="radio-input" id="length2" type="radio" name="subscription_length" value="6" />
-                    <label class="radio-label" for="length2">6 Months at $20 per Month ($120 Total)</label><br>
+                    <label class="radio-label" for="length2">6 Months - $120<br>($20 per Month)</label><br>
                 </div>
                 <div class="content form-group">
                     <input class="radio-input" id="length3" type="radio" name="subscription_length" value="12" />
-                    <label class="radio-label" for="length3">12 Months at $15 per Month ($180 Total)</label><br>
+                    <label class="radio-label" for="length3">12 Months - $180<br>($15 per Month)</label><br>
                 </div>
                 <div class="content form-group">
                     <button type="submit" class="btn btn-primary">
