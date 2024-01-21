@@ -20,26 +20,29 @@ class SubscriptionController extends Controller
     //
     public function index()
     {
-        if(Session::has('active_user'))
-        {
-            if (session()->get('user_type') == 'C')
-            {
-                $subscriptions = subscription::select(['subscription.*', 'genre.genre_title',
-                    DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
+        if (Session::has('active_user')) {
+            if (session()->get('user_type') == 'C') {
+                $subscriptions = subscription::select([
+                    'subscription.*',
+                    'genre.genre_title',
+                    DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')
+                ])
                     ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
                     ->join('client', 'subscription.client_id', '=', 'client.client_id')
                     ->where('client.user_id', "=", session()->get('user_id'))
                     ->get();
 
                 return view('subscription.index', compact('subscriptions'));
-            }
-            else
-            {
-                $subscriptions = subscription::select(['subscription.*', 'genre.genre_title', 'client.client_id',
-                DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
-                ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
-                ->join('client', 'subscription.client_id', '=', 'client.client_id')
-                ->get();
+            } else {
+                $subscriptions = subscription::select([
+                    'subscription.*',
+                    'genre.genre_title',
+                    'client.client_id',
+                    DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')
+                ])
+                    ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
+                    ->join('client', 'subscription.client_id', '=', 'client.client_id')
+                    ->get();
 
                 return view('subscription.index', compact('subscriptions'));
             }
@@ -50,83 +53,102 @@ class SubscriptionController extends Controller
     // Probably not necessary, all data is shown in index
     public function show(subscription $subscription)
     {
-        if(Session::has('active_user'))
-        {
-            $subscription = subscription::select(['subscription.*', 'genre.genre_title', 'client.user_id',
-            DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
-            ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
-            ->join('client', 'subscription.client_id', '=', 'client.client_id')
-            ->where('subscription.subscription_id', "=", $subscription->subscription_id)
-            ->first();
+        if (Session::has('active_user')) {
+            if (session()->get('user_type') == 'C') {
+                $client_id = client::select('client_id')
+                ->where('user_id', '=', session()->get('user_id'))
+                ->first();
+                if ($client_id = $subscription->client_id)
+                {
+                    $client_match = true;
+                }
+                else{
+                    $client_match = false;
+                }
+            }
+            else{
+                $client_match = false;
+            }
+            if (session()->get('user_type') == 'A' || session()->get('user_type') == 'E' || $client_match) {
+                $subscription = subscription::select([
+                    'subscription.*',
+                    'genre.genre_title',
+                    'client.user_id',
+                    DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')
+                ])
+                    ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
+                    ->join('client', 'subscription.client_id', '=', 'client.client_id')
+                    ->where('subscription.subscription_id', "=", $subscription->subscription_id)
+                    ->first();
 
-            $associated_packages = package::select(['package.package_month', 'package.package_year', 'sent_package.sent_package_id', 'sent_package.sent_package_date'])
-            ->join('sent_package', 'package.package_id','sent_package.package_id')
-            ->where('sent_package.subscription_id', '=', $subscription->subscription_id)
-            ->get();
+                $associated_packages = package::select(['package.package_month', 'package.package_year', 'sent_package.sent_package_id', 'sent_package.sent_package_date'])
+                    ->join('sent_package', 'package.package_id', 'sent_package.package_id')
+                    ->where('sent_package.subscription_id', '=', $subscription->subscription_id)
+                    ->get();
 
-            return view('subscription.show', compact('subscription', 'associated_packages'));
-        }
-        else
-        {
+                return view('subscription.show', compact('subscription', 'associated_packages'));
+            }
+        } else {
             return redirect('/');
         }
     }
-    
+
     public function create(genre $genre)
     {
-        if(Session::has('active_user'))
-        {
-            if (session()->get('user_type') == 'C')
-            {
+        if (Session::has('active_user')) {
+            if (session()->get('user_type') == 'C') {
                 return view('subscription.create', compact('genre'));
             }
         }
         return redirect('/');
     }
 
-    public function edit(/**Post $post**/)
-    {      
-        if(Session::has('active_user'))
-        {
+    public function edit( /**Post $post**/)
+    {
+        if (Session::has('active_user')) {
             return redirect('/');
         }
         return redirect('/');
     }
 
     // Likely will be given no functionality
-    public function delete(/**Post $post**/)
+    public function delete( /**Post $post**/)
     {
 
     }
 
     public function search()
-    {                
+    {
         // Takes given id, 
         $text = request('search_text');
-        if($text != "" || $text != null){
-            if (session()->get('user_type') == 'C')
-            {
-                $subscriptions = subscription::select(['subscription.*', 'genre.genre_title',
-                    DB::raw('date_add(subscription.subscription_date, interval subscription.subscription_length month) as subscription_end_date')])
+        if ($text != "" || $text != null) {
+            if (session()->get('user_type') == 'C') {
+                $subscriptions = subscription::select([
+                    'subscription.*',
+                    'genre.genre_title',
+                    DB::raw('date_add(subscription.subscription_date, interval subscription.subscription_length month) as subscription_end_date')
+                ])
                     ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
                     ->join('client', 'subscription.client_id', '=', 'client.client_id')
                     ->where('client.user_id', "=", session()->get('user_id'))
                     ->where('subscription.subscription_id', 'like', '%' . $text . '%')
-                    ->orwhere(function ($query) use ($text){
+                    ->orwhere(function ($query) use ($text) {
                         $query->where('client.user_id', "=", session()->get('user_id'))
-                        ->where('genre.genre_title', 'like', '%' . $text . '%');
+                            ->where('genre.genre_title', 'like', '%' . $text . '%');
                     })
                     ->get();
-            }
-            else
-            {
-                $subscriptions = subscription::select(['subscription.*', 'genre.genre_title', 'client.client_id',
-                DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')])
-                ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
-                ->join('client', 'subscription.client_id', '=', 'client.client_id')
-                ->where('subscription.subscription_id', 'like', '%' . $text . '%')
-                ->orwhere('genre.genre_title', 'like', '%' . $text . '%')
-                ->get();
+            } else {
+                $subscriptions = subscription::select([
+                    'subscription.*',
+                    'genre.genre_title',
+                    'client.client_id',
+                    DB::raw('last_day(date_add(subscription.subscription_date, interval subscription.subscription_length month)) as subscription_end_date')
+                ])
+                    ->join('genre', 'subscription.genre_id', '=', 'genre.genre_id')
+                    ->join('client', 'subscription.client_id', '=', 'client.client_id')
+                    ->where('subscription.subscription_id', 'like', '%' . $text . '%')
+                    ->orwhere('genre.genre_title', 'like', '%' . $text . '%')
+                    ->get();
             }
 
             // If the post exists that is equal to Id, redirect to the view page
@@ -144,49 +166,45 @@ class SubscriptionController extends Controller
     }
 
     public function store()
-        {
-            $genre_id = request('genre_id');
-            $client_id = client::select(['client.client_id'])
+    {
+        $genre_id = request('genre_id');
+        $client_id = client::select(['client.client_id'])
             ->where('client.user_id', session()->get('user_id'))
             ->first();
-            $subscription_length = request('subscription_length');
-    
-            $subscription_date = subscription::select(['subscription.subscription_date'])
+        $subscription_length = request('subscription_length');
+
+        $subscription_date = subscription::select(['subscription.subscription_date'])
             ->where('subscription.client_id', $client_id->client_id)
             ->where('subscription.genre_id', $genre_id)
             ->orderBy('subscription.subscription_id', 'desc')
             ->first();
 
-            if(!is_null($subscription_date))
-            {
-                $date = Carbon::parse($subscription_date->subscription_date)->addMonths($subscription_length);
-                
-                if($date->isFuture())
-                {
-                    session()->put('SubscriptionError', 'You already have an active subscription for this genre!');
-                    return redirect(('/subscriptions/create/'.$genre_id));
-                }
-            }
-            if($subscription_length == "3"){
-                $subscription_cost = 75.00;
-            }
-            else if($subscription_length == "6"){
-                $subscription_cost = 120.00;
-            }
-            else{
-                $subscription_cost = 180.00;
-            }
+        if (!is_null($subscription_date)) {
+            $date = Carbon::parse($subscription_date->subscription_date)->addMonths($subscription_length);
 
-            subscription::create([
-                'client_id' => $client_id->client_id,
-                 'genre_id' => $genre_id,
-                 'subscription_date' => Carbon::today()->toDateString(),
-                 'subscription_length' => $subscription_length,
-                 'subscription_cost' => $subscription_cost,
-                 ]);
-
-            return redirect('/subscriptions');
+            if ($date->isFuture()) {
+                session()->put('SubscriptionError', 'You already have an active subscription for this genre!');
+                return redirect(('/subscriptions/create/' . $genre_id));
+            }
         }
+        if ($subscription_length == "3") {
+            $subscription_cost = 75.00;
+        } else if ($subscription_length == "6") {
+            $subscription_cost = 120.00;
+        } else {
+            $subscription_cost = 180.00;
+        }
+
+        subscription::create([
+            'client_id' => $client_id->client_id,
+            'genre_id' => $genre_id,
+            'subscription_date' => Carbon::today()->toDateString(),
+            'subscription_length' => $subscription_length,
+            'subscription_cost' => $subscription_cost,
+        ]);
+
+        return redirect('/subscriptions');
+    }
 
     public function update()
     {

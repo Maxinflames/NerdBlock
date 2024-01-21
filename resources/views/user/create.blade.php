@@ -16,7 +16,7 @@
 
                                 <div class="col-md-6">
                                     <input id="user_first_name" type="text" class="form-control" name="user_first_name"
-                                        value="{{ old('user_first_name') }}" value="" tabindex="0" required autofocus>
+                                        value="{{ old('user_first_name') }}" tabindex="0" required autofocus>
 
                                     @if ($errors->has('user_first_name'))
                                         <span class="help-block">
@@ -31,7 +31,7 @@
 
                                 <div class="col-md-6">
                                     <input id="user_last_name" type="text" class="form-control" name="user_last_name"
-                                        value="{{ old('user_last_name') }}" value="" tabindex="1">
+                                        value="{{ old('user_last_name') }}" tabindex="1">
 
                                     @if ($errors->has('user_last_name'))
                                         <span class="help-block">
@@ -46,7 +46,7 @@
 
                                 <div class="col-md-6">
                                     <input id="user_email_address" type="email" class="form-control"
-                                        value="{{ old('user_email_address') }}" name="user_email_address" value=""
+                                        value="{{ old('user_email_address') }}" name="user_email_address"
                                         tabindex="2" required>
 
                                     @if ($errors->has('user_email_address'))

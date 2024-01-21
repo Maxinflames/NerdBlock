@@ -42,7 +42,7 @@
         <div class="form-group text-center">
             @if (Session::has('active_user'))
 
-                @if (session()->get('user_type') == 'A')
+                @if (session()->get('user_type') == 'A' || session()->get('user_type') == 'E')
                     @if ($associated_packages->count() == $subscription->subscription_length)
                         <p>This Subscription has been completed!</p>
                     @else
@@ -68,8 +68,10 @@
                 <td class="text-center">{{ $package->package_month }}</td>
                 <td class="text-center">{{ $package->package_year }}</td>
                 <td class="text-center">{{ $package->sent_package_date }}</td>
-                <td class="text-center"><a class="btn btn-secondary"
-                        href="/subscriptions/rate/{{ $package->sent_package_id }}">Rate</a></td>
+                @if (session()->get('user_type') == 'C')
+                    <td class="text-center"><a class="btn btn-secondary"
+                            href="/subscriptions/rate/{{ $package->sent_package_id }}">Rate</a></td>
+                @endif
             </tr>
         @endforeach
     </table>

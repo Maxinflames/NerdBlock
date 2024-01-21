@@ -7,28 +7,28 @@
 
             <div class="content">
                 <div>
+                    <a class="btn btn-secondary" href="/reports/financials">
+                        <h4>Financial Report</h4>
+                    </a>
+                </div>
+                <div>
                     <a class="btn btn-secondary" href="/reports/packages">
-                        <h4>Shipped Package Reports</h4>
-                    </a>
-                </div>
-                <div>
-                    <a class="btn btn-secondary" href="/reports/sales">
-                        <h4>Sales Reports</h4>
-                    </a>
-                </div>
-                <div>
-                    <a class="btn btn-secondary" href="/reports/subscriptions">
-                        <h4>Subscription Reports</h4>
+                        <h4>Package Report</h4>
                     </a>
                 </div>
                 <div>
                     <a class="btn btn-secondary" href="/reports/products">
-                        <h4>Product Reports</h4>
+                        <h4>Product Report</h4>
                     </a>
                 </div>
                 <div>
                     <a class="btn btn-secondary" href="/reports/shipping">
-                        <h4>Shipping Reports</h4>
+                        <h4>Shipping Report</h4>
+                    </a>
+                </div>
+                <div>
+                    <a class="btn btn-secondary" href="/reports/subscriptions">
+                        <h4>Subscription Report</h4>
                     </a>
                 </div>
             </div>

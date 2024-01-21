@@ -157,7 +157,7 @@ Route::get('/shipments/{shipment}', 'ShipmentController@show')->name('shipment-s
 Route::get('/shipment-item/create/{shipment}', 'ShipmentItemController@create')->name('shipment-item-create');
 Route::post('/shipment-item/create/{shipment}', 'ShipmentItemController@store')->name('shipment-item-store');
 
-
+Route::get('/shipment-item/edit/{shipment_item}', 'ShipmentItemController@edit')->name('shipment-item-edit');
 
 // Allows admins to create new package items
 Route::get('/packaged-item/create/{package}', 'PackagedItemController@create')->name('packaged_item-create');
@@ -169,6 +169,15 @@ Route::post('/sent-package', 'SentPackageController@store')->name('sent_package-
 
 
 Route::get('/reports', 'ReportController@index')->name('reports');
+Route::get('/reports/subscriptions', 'ReportController@subscriptions')->name('reports-subscriptions');
+Route::post('/reports/subscriptions', 'ReportController@generate_subscription_report')->name('reports-subscription-generate');
+Route::get('/reports/shipping', 'ReportController@shipping')->name('reports-shipping');
+Route::post('/reports/shipping', 'ReportController@generate_shipping_report')->name('reports-shipping-generate');
+Route::get('/reports/packages', 'ReportController@packages')->name('reports-packages');
+Route::post('/reports/packages', 'ReportController@generate_package_report')->name('reports-package-generate');
+Route::get('/reports/financials', 'ReportController@financials')->name('reports-financials');
+Route::post('/reports/financials', 'ReportController@generate_financial_report')->name('reports-financial-generate');
+Route::get('/reports/products', 'ReportController@products')->name('reports-products');
 
 
 

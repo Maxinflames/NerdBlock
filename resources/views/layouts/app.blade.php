@@ -45,6 +45,13 @@
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
+                                    @if (Session::get('user_type') == 'C')
+                                        <li>
+                                            <a href="/users/{{ Session::get('user_id') }}">
+                                                Account
+                                            </a>
+                                        </li>
+                                    @endif
                                     <li>
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
@@ -57,14 +64,6 @@
                                             {{ csrf_field() }}
                                         </form>
                                     </li>
-
-                                    @if (Session::get('user_type') == 'C')
-                                        <li>
-                                            <a href="/users/{{ Session::get('user_id') }}">
-                                                Account
-                                            </a>
-                                        </li>
-                                    @endif
                                 </ul>
                             </li>
                         @else
@@ -91,12 +90,17 @@
             @endif
         </ul>
         <div class="d-flex content-space bg-light">
-            <div class="center-block">
+            <div class="center-block content-sizing">
                 @yield('content')
             </div>
         </div>
-    </div>
 
+
+    </div>
+    <div class="content-space center fixed-bottom">
+        <p>Prices are in CAD, and Language is following Standard Canadian English</p>
+        <p>© 2023. Copyright by NerdBlock </p>
+    </div>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
 </body>

@@ -53,7 +53,7 @@
                 <td class="text-center">${{ number_format($product->shipment_item_unit_cost, 2, '.', ',') }}</td>
                 @if (session()->get('user_type') == 'A')
                     <td class="text-center width-5"><a class="btn btn-secondary"
-                            href="/shipment-item/edit/{{ $product->shipment_item_id }}">Edit</a></td>
+                            href="#NotImplemented">Edit</a></td>
                 @endif
                 <td class="text-center">{{ $product->product_id }}</td>
                 <td class="text-center">{{ $product->genre_id }}</td>
